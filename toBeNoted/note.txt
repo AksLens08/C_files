@@ -1,0 +1,6 @@
+int arrNmae
+array sign []
+method sign ()
+block sign and set sign {}
+int arrName[size] (starts from 0)
+address[i]=base address + i * size of data type
