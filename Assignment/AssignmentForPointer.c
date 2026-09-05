@@ -1,201 +1,221 @@
 #include <stdio.h>
 #include <string.h>
 
-int StringLength(char*);
-void ConvertToUpper(char*);
-void ConvertToLower(char*);
-void ConcatStr(char*, char*);
-void AppendStr(char*, char*);
-void compareStr(char*, char*);
-void reverseStr(char*);
-void extractStrFrmLeft(char*, int);
-void extractStrFrmRight(char*, int);
-void extractStrFrmMiddle(char*, int, int);
-void insertStr(char*, int, char*);
-int indexingStr(char*, char*);
-void deleteStr(char*, int, char*);
-void replaceStr(char*, char*, char*);
-
-int StringLength(char *str) {
+int StringLength(char *str)
+{
     return strlen(str);
 }
 
-void ConvertToUpper(char *str) {
-    while (*str != '\0') {
-        if (*str >= 'a' && *str <= 'z') {
+void ConvertToUpper(char *str)
+{
+    while (*str != '\0')
+    {
+        if (*str >= 'a' && *str <= 'z')
             *str = *str - 32;
-        }
+
         str++;
     }
+
+    printf("Upper Case = %s\n", str - strlen(str));
 }
 
-void ConvertToLower(char *str) {
-    while (*str != '\0') {
-        if (*str >= 'A' && *str <= 'Z') {
-            *str = *str + 32;
-        }
-        str++;
+void ConvertToLower(char *str)
+{
+    char *p = str;
+
+    while (*p != '\0')
+    {
+        if (*p >= 'A' && *p <= 'Z')
+            *p = *p + 32;
+
+        p++;
     }
+
+    printf("Lower Case = %s\n", str);
 }
 
-void ConcatStr(char *str1, char *str2) {
+void ConcatStr(char *str1, char *str2)
+{
+    char result[200];
+
+    strcpy(result, str1);
+    strcat(result, str2);
+
+    printf("Concatenated String = %s\n", result);
+}
+
+void AppendStr(char *str1, char *str2)
+{
     strcat(str1, str2);
+
+    printf("Appended String = %s\n", str1);
 }
 
-void AppendStr(char *str1, char *str2) {
-    strcat(str1, str2);
-}
+void compareStr(char *str1, char *str2)
+{
+    int x = strcmp(str1, str2);
 
-void compareStr(char *str1, char *str2) {
-    int diff = strcmp(str1, str2);
-    if (diff == 0)
-        printf("Strings are equal.\n");
-    else if (diff < 0)
-        printf("First string is smaller than the second.\n");
+    if (x > 0)
+        printf("First string is greater.\n");
+    else if (x < 0)
+        printf("Second string is greater.\n");
     else
-        printf("First string is greater than the second.\n");
+        printf("Both strings are equal.\n");
 }
 
-void reverseStr(char *str) {
-    int len = strlen(str);
-    char *end = str + len - 1;
-    while (str < end) {
-        char temp = *str;
-        *str = *end;
-        *end = temp;
-        str++;
-        end--;
-    }
-}
-
-void extractStrFrmLeft(char *str, int n) {
-    char sub[100];
+void reverseStr(char *str)
+{
     int i = 0;
-    while (i < n && *str != '\0') {
-        sub[i++] = *str++;
+    int j = strlen(str) - 1;
+    char temp;
+
+    while (i < j)
+    {
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+
+        i++;
+        j--;
     }
-    sub[i] = '\0';
-    printf("Extracted Substring (Left): %s\n", sub);
+
+    printf("Reversed String = %s\n", str);
 }
 
-void extractStrFrmRight(char *str, int n) {
+void extractStrFrmLeft(char *str, int n)
+{
+    char result[100];
+
+    strncpy(result, str, n);
+    result[n] = '\0';
+
+    printf("Left %d characters = %s\n", n, result);
+}
+
+void extractStrFrmRight(char *str, int n)
+{
     int len = strlen(str);
-    if (n > len) n = len;
-    char *p = str + (len - n);
-    printf("Extracted Substring (Right): %s\n", p);
+
+    printf("Right %d characters = %s\n", n, str + len - n);
 }
 
-void extractStrFrmMiddle(char *str, int start, int length) {
-    char sub[100];
-    int i = 0;
-    str += start;
-    while (i < length && *str != '\0') {
-        sub[i++] = *str++;
-    }
-    sub[i] = '\0';
-    printf("Extracted Substring (Middle): %s\n", sub);
+void extractStrFrmMiddle(char *str, int pos, int n)
+{
+    char result[100];
+
+    strncpy(result, str + pos, n);
+    result[n] = '\0';
+
+    printf("Middle characters = %s\n", result);
 }
 
-void insertStr(char *str1, int pos, char *str2) {
-    int len1 = strlen(str1);
-    int len2 = strlen(str2);
-    char *p = str1 + len1;
-    while (p >= str1 + pos) {
-        *(p + len2) = *p;
-        p--;
-    }
-    char *target = str1 + pos;
-    while (*str2 != '\0') {
-        *target++ = *str2++;
-    }
+void insertStr(char *str, int pos, char *insert)
+{
+    char result[200];
+
+    strncpy(result, str, pos);
+    result[pos] = '\0';
+
+    strcat(result, insert);
+    strcat(result, str + pos);
+
+    printf("Inserted String = %s\n", result);
 }
 
-int indexingStr(char *str1, char *str2) {
-    char *p = strstr(str1, str2);
-    if (p != NULL) {
-        return (int)(p - str1);
-    }
+int indexingStr(char *str, char *pattern)
+{
+    char *p = strstr(str, pattern);
+
+    if (p != '\0')
+        return p - str;
+
     return -1;
 }
 
-void deleteStr(char *str1, int pos, char *str2) {
-    int len2 = strlen(str2);
-    char *p = str1 + pos;
-    char *src = str1 + pos + len2;
-    while (*src != '\0') {
-        *p++ = *src++;
+void deleteStr(char *str, int pos, char *del)
+{
+    int len = strlen(del);
+
+    if (strncmp(str + pos, del, len) == 0)
+    {
+        memmove(str + pos, str + pos + len,
+                strlen(str) - pos - len + 1);
+
+        printf("Deleted String = %s\n", str);
     }
-    *p = '\0';
+    else
+    {
+        printf("String not found at position %d.\n", pos);
+    }
 }
 
-void replaceStr(char *str, char *oldPat, char *newPat) {
-    int idx = indexingStr(str, oldPat);
-    if (idx != -1) {
-        deleteStr(str, idx, oldPat);
-        insertStr(str, idx, newPat);
+void replaceStr(char *str, char *old, char *newStr)
+{
+    char result[200];
+    char *p = strstr(str, old);
+
+    if (p != '\0')
+    {
+        strncpy(result, str, p - str);
+        result[p - str] = '\0';
+
+        strcat(result, newStr);
+        strcat(result, p + strlen(old));
+
+        strcpy(str, result);
     }
+
+    printf("Replaced String = %s\n", str);
 }
 
-int main() {
-    char str1[300];
-    int i = 0, ch;
+int main()
+{
+    char str1[200] = "MIIT ECE";
+    char str2[100] = "Programming II";
+    char original[200];
+    char work[200];
 
-    printf("Enter a string for str1: ");
-    while ((ch = getchar()) != '\n' && ch != EOF) {
-        if (i < sizeof(str1) - 1) {
-            str1[i++] = (char)ch;
-        }
-    }
-    str1[i] = '\0';
+    int index;
 
-    char temp[300];
+    strcpy(original, str1);
 
-    printf("\nLength: %d\n", StringLength(str1));
+    printf("First String = %s\n", original);
+    printf("Second String = %s\n\n", str2);
 
-    strcpy(temp, str1);
-    ConvertToUpper(temp);
-    printf("Upper Case: %s\n", temp);
+    printf("1. Length = %d\n", StringLength(original));
 
-    strcpy(temp, str1);
-    ConvertToLower(temp);
-    printf("Lower Case: %s\n", temp);
+    strcpy(work, original);
+    ConvertToUpper(work);
 
-    strcpy(temp, str1);
-    ConcatStr(temp, "Test");
-    printf("Concatenated: %s\n", temp);
+    strcpy(work, original);
+    ConvertToLower(work);
 
-    strcpy(temp, str1);
-    AppendStr(temp, "Appended");
-    printf("Appended: %s\n", temp);
+    ConcatStr(original, str2);
 
-    printf("Comparison with 'MIITECE': ");
-    compareStr(str1, "MIITECE");
+    strcpy(work, original);
+    AppendStr(work, str2);
 
-    strcpy(temp, str1);
-    reverseStr(temp);
-    printf("Reversed: %s\n", temp);
+    compareStr(original, str2);
 
-    if (StringLength(str1) >= 3) {
-        extractStrFrmLeft(str1, 3);
-        extractStrFrmRight(str1, 3);
-        extractStrFrmMiddle(str1, 1, 3);
-    }
+    strcpy(work, original);
+    reverseStr(work);
 
-    strcpy(temp, str1);
-    insertStr(temp, 0, "Hello ");
-    printf("Inserted: %s\n", temp);
+    extractStrFrmLeft(original, 3);
 
-    printf("Index of 'I': %d\n", indexingStr(str1, "I"));
+    extractStrFrmRight(original, 8);
 
-    strcpy(temp, str1);
-    if (StringLength(temp) >= 1) {
-        deleteStr(temp, 0, "M");
-        printf("Deleted: %s\n", temp);
-    }
+    extractStrFrmMiddle(original, 5, 1);
 
-    strcpy(temp, str1);
-    replaceStr(temp, "I", "X");
-    printf("Replaced: %s\n", temp);
+    insertStr(original, 8, "CSE");
+
+    index = indexingStr(original, "ECE");
+    printf("Index = %d\n", index);
+
+    strcpy(work, original);
+    deleteStr(work, 5, "ECE");
+
+    strcpy(work, original);
+    replaceStr(work, "ECE", "CSE");
 
     return 0;
 }
