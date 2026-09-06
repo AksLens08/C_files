@@ -1,9 +1,16 @@
 #include <stdio.h>
-#include <string.h>
 
 int StringLength(char *str)
 {
-    return strlen(str);
+    int length = 0;
+
+    while (*str != '\0')
+    {
+        length++;
+        str++;
+    }
+
+    return length;
 }
 
 void ConvertToUpper(char *str)
@@ -15,207 +22,336 @@ void ConvertToUpper(char *str)
 
         str++;
     }
-
-    printf("Upper Case = %s\n", str - strlen(str));
 }
 
 void ConvertToLower(char *str)
 {
-    char *p = str;
-
-    while (*p != '\0')
+    while (*str != '\0')
     {
-        if (*p >= 'A' && *p <= 'Z')
-            *p = *p + 32;
+        if (*str >= 'A' && *str <= 'Z')
+            *str = *str + 32;
 
-        p++;
+        str++;
     }
-
-    printf("Lower Case = %s\n", str);
 }
 
 void ConcatStr(char *str1, char *str2)
 {
-    char result[200];
+    while (*str1 != '\0')
+        str1++;
 
-    strcpy(result, str1);
-    strcat(result, str2);
+    while (*str2 != '\0')
+    {
+        *str1 = *str2;
+        str1++;
+        str2++;
+    }
 
-    printf("Concatenated String = %s\n", result);
+    *str1 = '\0';
 }
 
 void AppendStr(char *str1, char *str2)
 {
-    strcat(str1, str2);
-
-    printf("Appended String = %s\n", str1);
+    ConcatStr(str1, str2);
 }
 
 void compareStr(char *str1, char *str2)
 {
-    int x = strcmp(str1, str2);
+    while (*str1 != '\0' && *str1 == *str2)
+    {
+        str1++;
+        str2++;
+    }
 
-    if (x > 0)
+    if (*str1 == *str2)
+        printf("Strings are equal.\n");
+    else if (*str1 > *str2)
         printf("First string is greater.\n");
-    else if (x < 0)
-        printf("Second string is greater.\n");
     else
-        printf("Both strings are equal.\n");
+        printf("Second string is greater.\n");
 }
 
 void reverseStr(char *str)
 {
-    int i = 0;
-    int j = strlen(str) - 1;
+    char *left = str;
+    char *right = str;
     char temp;
 
-    while (i < j)
-    {
-        temp = str[i];
-        str[i] = str[j];
-        str[j] = temp;
+    while (*right != '\0')
+        right++;
 
-        i++;
-        j--;
+    right--;
+
+    while (left < right)
+    {
+        temp = *left;
+        *left = *right;
+        *right = temp;
+
+        left++;
+        right--;
+    }
+}
+
+void extractStrFrmLeft(char *str, int count)
+{
+    char *ptr = str;
+
+    while (*ptr != '\0' && count > 0)
+    {
+        ptr++;
+        count--;
     }
 
-    printf("Reversed String = %s\n", str);
+    *ptr = '\0';
 }
 
-void extractStrFrmLeft(char *str, int n)
+void extractStrFrmRight(char *str, int count)
 {
-    char result[100];
+    int length = StringLength(str);
+    char *source;
+    char *destination = str;
 
-    strncpy(result, str, n);
-    result[n] = '\0';
+    if (count > length)
+        count = length;
 
-    printf("Left %d characters = %s\n", n, result);
+    source = str + length - count;
+
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0';
 }
 
-void extractStrFrmRight(char *str, int n)
+void extractStrFrmMiddle(char *str, int start, int count)
 {
-    int len = strlen(str);
+    char *source = str + start;
+    char *destination = str;
 
-    printf("Right %d characters = %s\n", n, str + len - n);
+    while (*source != '\0' && count > 0)
+    {
+        *destination = *source;
+        destination++;
+        source++;
+        count--;
+    }
+
+    *destination = '\0';
 }
 
-void extractStrFrmMiddle(char *str, int pos, int n)
+void insertStr(char *mainStr, int position, char *insertedStr)
 {
-    char result[100];
+    int mainLength = StringLength(mainStr);
+    int insertLength = StringLength(insertedStr);
+    char *source;
+    char *destination;
 
-    strncpy(result, str + pos, n);
-    result[n] = '\0';
+    source = mainStr + mainLength;
+    destination = source + insertLength;
 
-    printf("Middle characters = %s\n", result);
-}
+    while (source >= mainStr + position)
+    {
+        *destination = *source;
 
-void insertStr(char *str, int pos, char *insert)
-{
-    char result[200];
+        if (source == mainStr + position)
+            break;
 
-    strncpy(result, str, pos);
-    result[pos] = '\0';
+        source--;
+        destination--;
+    }
 
-    strcat(result, insert);
-    strcat(result, str + pos);
+    source = insertedStr;
+    destination = mainStr + position;
 
-    printf("Inserted String = %s\n", result);
+    while (*source != '\0')
+    {
+        *destination = *source;
+        source++;
+        destination++;
+    }
 }
 
 int indexingStr(char *str, char *pattern)
 {
-    char *p = strstr(str, pattern);
+    char *start;
+    char *text;
+    char *search;
 
-    if (p != '\0')
-        return p - str;
+    start = str;
+
+    while (*start != '\0')
+    {
+        text = start;
+        search = pattern;
+
+        while (*text != '\0' &&
+               *search != '\0' &&
+               *text == *search)
+        {
+            text++;
+            search++;
+        }
+
+        if (*search == '\0')
+            return (int)(start - str);
+
+        start++;
+    }
 
     return -1;
 }
 
-void deleteStr(char *str, int pos, char *del)
+void deleteStr(char *mainStr, int position, char *deleteValue)
 {
-    int len = strlen(del);
+    int deleteLength = StringLength(deleteValue);
+    char *source;
+    char *destination;
 
-    if (strncmp(str + pos, del, len) == 0)
+    source = mainStr + position;
+
+    while (*deleteValue != '\0' && *source == *deleteValue)
     {
-        memmove(str + pos, str + pos + len,
-                strlen(str) - pos - len + 1);
-
-        printf("Deleted String = %s\n", str);
+        source++;
+        deleteValue++;
     }
-    else
+
+    if (*deleteValue != '\0')
+        return;
+
+    source = mainStr + position + deleteLength;
+    destination = mainStr + position;
+
+    while ((*destination = *source) != '\0')
     {
-        printf("String not found at position %d.\n", pos);
+        destination++;
+        source++;
     }
 }
 
-void replaceStr(char *str, char *old, char *newStr)
+void replaceStr(char *str, char *oldPattern, char *newPattern)
 {
-    char result[200];
-    char *p = strstr(str, old);
+    int oldLength = StringLength(oldPattern);
+    int newLength = StringLength(newPattern);
+    int difference;
+    char *position;
+    char *source;
+    char *destination;
+    char *end;
+    char *boundary;
 
-    if (p != '\0')
+    if (oldLength == 0)
+        return;
+
+    position = str;
+
+    while (*position != '\0')
     {
-        strncpy(result, str, p - str);
-        result[p - str] = '\0';
+        if (indexingStr(position, oldPattern) == 0)
+        {
+            difference = newLength - oldLength;
 
-        strcat(result, newStr);
-        strcat(result, p + strlen(old));
+            if (difference > 0)
+            {
+                end = str;
 
-        strcpy(str, result);
+                while (*end != '\0')
+                    end++;
+
+                source = end;
+                boundary = position + oldLength;
+
+                while (source >= boundary)
+                {
+                    *(source + difference) = *source;
+
+                    if (source == boundary)
+                        break;
+
+                    source--;
+                }
+            }
+            else if (difference < 0)
+            {
+                source = position + oldLength;
+                destination = position + newLength;
+
+                while ((*destination = *source) != '\0')
+                {
+                    destination++;
+                    source++;
+                }
+            }
+
+            source = newPattern;
+            destination = position;
+
+            while (*source != '\0')
+            {
+                *destination = *source;
+                source++;
+                destination++;
+            }
+
+            position += newLength;
+        }
+        else
+        {
+            position++;
+        }
     }
-
-    printf("Replaced String = %s\n", str);
 }
 
-int main()
+int main(void)
 {
-    char str1[200] = "MIIT ECE";
-    char str2[100] = "Programming II";
-    char original[200];
-    char work[200];
+    char str1[200] = "MIITECE";
+    char str2[200] = "Programming II";
 
-    int index;
+    printf("String 1: %s\n", str1);
+    printf("String 2: %s\n\n", str2);
 
-    strcpy(original, str1);
+    printf("1. Length = %d\n", StringLength(str1));
 
-    printf("First String = %s\n", original);
-    printf("Second String = %s\n\n", str2);
+    ConvertToUpper(str1);
+    printf("2. Upper Case = %s\n", str1);
 
-    printf("1. Length = %d\n", StringLength(original));
+    ConvertToLower(str1);
+    printf("3. Lower Case = %s\n", str1);
 
-    strcpy(work, original);
-    ConvertToUpper(work);
+    ConcatStr(str1, str2);
+    printf("4. Concatenated String = %s\n", str1);
 
-    strcpy(work, original);
-    ConvertToLower(work);
+    AppendStr(str2, str1);
+    printf("5. Appended String = %s\n", str2);
 
-    ConcatStr(original, str2);
+    printf("6. ");
+    compareStr(str1, str2);
 
-    strcpy(work, original);
-    AppendStr(work, str2);
+    reverseStr(str1);
+    printf("7. Reversed String = %s\n", str1);
 
-    compareStr(original, str2);
+    extractStrFrmLeft(str1, 5);
+    printf("8. Left 5 characters = %s\n", str1);
 
-    strcpy(work, original);
-    reverseStr(work);
+    extractStrFrmRight(str2, 5);
+    printf("9. Right 5 characters = %s\n", str2);
 
-    extractStrFrmLeft(original, 3);
+    extractStrFrmMiddle(str2, 1, 4);
+    printf("10. Middle 4 characters = %s\n", str2);
 
-    extractStrFrmRight(original, 8);
+    insertStr(str1, 2, str2);
+    printf("11. Insert String = %s\n", str1);
 
-    extractStrFrmMiddle(original, 5, 1);
+    printf("12. Indexing = %d\n", indexingStr(str1, str2));
 
-    insertStr(original, 8, "CSE");
+    deleteStr(str1, 2, str2);
+    printf("13. Deleting String = %s\n", str1);
 
-    index = indexingStr(original, "ECE");
-    printf("Index = %d\n", index);
-
-    strcpy(work, original);
-    deleteStr(work, 5, "ECE");
-
-    strcpy(work, original);
-    replaceStr(work, "ECE", "CSE");
+    replaceStr(str1, str2, "ECE");
+    printf("14. Replacing String = %s\n", str1);
 
     return 0;
 }
